@@ -6,7 +6,7 @@ public class CameraController : MonoBehaviour
     private Camera Camera;
 
     [SerializeField]
-    private Transform Player;
+    private GameObject Player;
 
     private Transform Transform
     {
@@ -26,12 +26,17 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        Position = Player.position;
-        if (Input.GetMouseButton(0))
+        Position = Player.transform.position;
+        if (MouseButton.Left)
         {
             Rotation = CalculateRotation();
         }
-        Transform.LookAt(Player);
+        if (MouseButton.Right)
+        {
+            Rotation = CalculateRotation();
+            Player.transform.eulerAngles = new Vector3(0, Rotation.y - 90, 0);
+        }
+        Transform.LookAt(Player.transform);
         Transform.Translate(new Vector3(0, 0, -10));
     }
 
