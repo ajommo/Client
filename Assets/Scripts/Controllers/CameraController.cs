@@ -1,3 +1,5 @@
+using System;
+
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -7,6 +9,11 @@ public class CameraController : MonoBehaviour
 
     [SerializeField]
     private GameObject Player;
+
+    [SerializeField]
+    private Transform Target;
+
+    private float distance = 10.0f;
 
     private Transform Transform
     {
@@ -26,7 +33,13 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        Position = Player.transform.position;
+        Position = Target.position;
+        UpdateRotation();
+        UpdateZoom();
+    }
+
+    private void UpdateRotation()
+    {
         if (MouseButton.Left)
         {
             Rotation = CalculateRotation();
@@ -36,8 +49,20 @@ public class CameraController : MonoBehaviour
             Rotation = CalculateRotation();
             Player.transform.eulerAngles = new Vector3(0, Rotation.y - 90, 0);
         }
-        Transform.LookAt(Player.transform);
-        Transform.Translate(new Vector3(0, 0, -10));
+    }
+
+    private void UpdateZoom()
+    {
+        if (Mouse.Scroll < 0)
+        {
+            distance = Math.Min(15.0f, distance + 1.0f);
+        }
+        if (Mouse.Scroll > 0)
+        {
+            distance = Math.Max(1.0f, distance - 1.0f);
+        }
+        Transform.LookAt(Target);
+        Transform.Translate(new Vector3(0, 0, -distance));
     }
 
     private Vector3 CalculateRotation()
